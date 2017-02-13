@@ -17,14 +17,17 @@
    
    3.1 数据库连接池部分 
    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-   ```if DBPool.__pool is None:  
-   ```   DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 , 
-   ```                             host="192.168.4.202" , port=3306, user="no1" , passwd="password", 
-    ```                            db="no1",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1']) 
-       ```   connect = DBPool.__pool.connection()
-          connect.autocommit = 1
-      ```  print connect
-      ```  return connect 
+     ```
+     if DBPool.__pool is None:  
+         DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 , 
+                           host="192.168.4.202" , port=3306, user="no1" , passwd="password", 
+                                db="no1",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1']) 
+         connect = DBPool.__pool.connection()
+         connect.autocommit = 1
+         print connect
+         return connect 
+
+     ```
    
    
    3.2  表维护部分：
