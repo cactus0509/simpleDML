@@ -6,8 +6,8 @@
 1. 安装 web.py 
    # pip install web.py
 2. 安装python模块 ：  MySQLdb  DBUtils
-    # pip2.7 install DBUtils
-    # pip2.7 install MySQL-python
+    >  pip2.7 install DBUtils
+    >  pip2.7 install MySQL-python
 
 3. 修改数据库连接池，要维护的表。
 
