@@ -1,0 +1,159 @@
+$def with (data,th_data,td_data,search_column)		
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <meta http-equiv="Content-Language" content="utf-8" /> 
+  <title>简单表数据维护工具</title> 
+  <meta name="Description" content="" /> 
+  <meta name="Keywords" content="" />  
+  <style type="text/css">
+    li {list-style-type:none;}
+	html,body{
+		overflow:hidden;
+		height:100%;
+		margin:0;
+		padding:0;
+		font:14px/1.8 Georgia, Arial, Simsun;		
+	} 
+	#hd{
+		position:absolute;
+		top:0;
+		left:0;
+		width:100%;
+		height:100px; 
+		background:#666;
+	}
+#bd{
+	position:absolute;
+	top:110px;
+	right:0;
+	bottom:110px;
+	left:0;
+	overflow:hidden;
+	width:100%; 
+}
+#side{
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	overflow:auto;
+	width:200px;
+	_height:100%;
+	background:#666;
+}
+#main{
+	position:absolute;
+	_position:static;
+	top:0;
+	right:0;
+	bottom:0;
+	left:210px;
+	overflow:auto;
+	_overflow:hidden;
+	_height:100%;
+	_margin-left:210px;
+	<!-- background:#666; -->
+}
+#content{
+_overflow:auto;
+_width:100%;
+_height:100%;
+}
+#ft{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:100px;
+background:#999;
+}
+/* 与布局无关，一些说明性内容样式 */
+.tit-layout{margin:30px 0 0;font-size:18px;text-align:center;}
+.copyright{font-weight:bold;text-align:center;}
+#feature{width:200%;line-height:4;}
+#feature .hd{padding:20px 15px;}
+#feature .hd h2{margin:0;font-size:16px;}
+#feature .bd ol{margin-top:0;}
+#feature .bd h3{margin:0;padding:0 15px;font-size:14px;}
+#feature .ft{padding:10px 15px 30px;}
+</style> 
+
+        <script>
+        function del() {
+			var msg = "您真的确定要删除吗？\n\n请确认！";
+				if (confirm(msg)==true){
+					return true;
+				}else{
+					return false;
+				}
+			}
+        </script>
+        
+ </head> 
+ <body> 
+  
+  <div id="hd"> 
+   <h1 class="tit-layout"> Simple DML Tool </h1> 
+  </div> 
+   
+  <div id="bd"> 
+   
+   <div id="side">
+    	 <ul>
+			$for table in data:
+    	 		<li> <a href="/table?table_name=$table["table_name"]"> $table["table_name_cn"] </a> </li>
+    	  </ul>
+   </div> 
+   
+   <div id="main"> 
+  		$if search_column and search_column["data"]:
+  		   <div style="margin:25px;">
+  		   	<h4>$search_column["table_name_cn"]</h4>
+  		   </div>
+  		   <div style="margin:25px;">
+		   <form action="/search" method="POST">
+  		    <ul>
+  		    		$for line in search_column["data"]:
+		   				<li>$line["column_cn"] <input type="text" name='$line["column"]'></li>
+		    <li><input type="submit" value="查询"></li>
+		   	</ul>
+		   	<input type="hidden" name="table_name" value='$search_column["table_name"]' />
+		   	</form>
+		   	</div>
+		   	
+  		   <div style="margin-left:25px;">
+  		   	<h5> <a href="/insert?action=insert&table_name=$search_column["table_name"]" target="_blank"> 录入数据 </a> </h6>
+  		   </div>
+		   	
+   		<div style="margin:25px;">
+   			$if th_data:
+   			    <table style="width:90%">
+	   			    <tr> 
+	   			    	$for ths in th_data:
+	     		 			<th style="text-align:left;background-color:grey;">$ths["column_cn"]</th>
+	     		 		<th style="text-align:left;background-color:grey;">操作</th>
+	     		 	</tr>
+	     		 	$if td_data:
+	     		 		$for line in td_data:
+							<tr>  
+	   			    			$for th in th_data :
+	     		 					<td>  $line[ th["column"] ]   </td>
+	     		 				<td>  
+	     		 				<a href='/getone?$search_column["primary_key"]=$line[ search_column["primary_key"] ]&table_name=$search_column["table_name"]&action=update' target="_blank" >
+	     		 				 修改
+	     		 			    </a> 
+	     		 				 |  <a href='/delete?$search_column["primary_key"]=$line[ search_column["primary_key"]]&table_name=$search_column["table_name"]' onclick="javascript:return del();" style="color:grey" >删除</a>    </td>
+	     		 			</tr>
+	     		 		
+     		 	</table>
+     	</div>
+    </div> 
+ </div> 
+   
+  <div id="ft"> 
+	   <address class="copyright">Copyright </address>
+  </div>  
+ </body>
+</html>
