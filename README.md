@@ -55,10 +55,10 @@ init_tables=[
  ]
  ```
  
- 5. 启动 功能页面
-  # python admin.py 
+4. 启动 功能页面
+  > python admin.py 
 
-6.打开浏览器访问:
+5.打开浏览器访问:
    http://localhost:8080
    
     
