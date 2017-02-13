@@ -4,7 +4,7 @@
 使用方法：
 
 1. 安装 web.py 
-   # pip install web.py
+    >  # pip install web.py
 2. 安装python模块 ：  MySQLdb  DBUtils
     >  # pip2.7 install DBUtils  <br>
     >  # pip2.7 install MySQL-python <br>
@@ -17,14 +17,14 @@
    
    3.1 数据库连接池部分 
    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-        if DBPool.__pool is None:  <br>
-            DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 ,  <br>
-                              host="192.168.4.202" , port=3306, user="no1" , passwd="password",  <br>
-                              db="no1",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1']) <br> 
-        connect = DBPool.__pool.connection()<br>
-        connect.autocommit = 1<br>
-        print connect<br>
-        return connect  <br>
+    >      if DBPool.__pool is None:  <br>
+    >          DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 ,  <br>
+     >                           host="192.168.4.202" , port=3306, user="no1" , passwd="password",  <br>
+    >                            db="no1",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1']) <br> 
+     >     connect = DBPool.__pool.connection()<br>
+    >      connect.autocommit = 1<br>
+     >     print connect<br>
+     >     return connect  <br>
    
    
    3.2  表维护部分：
