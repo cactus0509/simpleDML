@@ -9,10 +9,14 @@ from MySQLdb.cursors import DictCursor
 from DBUtils.PooledDB import PooledDB  
 
 render = web.template.render('templates') 
+"""
+create table fly ( id int not null primary key AUTO_INCREMENT, fly_from varchar(32),fly_to varchar(32),price int, flight_no varchar(32) , time varchar(32) ); 
+
+"""
 init_tables=[
  {
-    "table_name": "t_yhk_words",
-    "table_name_cn": "每日习语",
+    "table_name": "fly",
+    "table_name_cn": "航班信息",
     "dml":{
             "insert":True,
             "delete":True,
@@ -23,66 +27,11 @@ init_tables=[
     "sort":" order by id desc ",
     "structure": [
                      { "column":"id", "type":"int","column_cn":"ID" , "size":10, "show": True ,"search":True  },
-                     { "column":"post_date", "type":"date","size":20, "column_cn":"日期","show": True,"insert":True },
-                     { "column":"title", "type":"varchar","size":80, "column_cn":"标题","show": True ,"search":True,"insert":True},                      
-                     { "column":"content", "type":"textarea","rows":"20", "cols":"120", "column_cn":"内容","show": False ,"insert":True, "html":True}
-                ]
- },
-  {
-    "table_name": "t_yhk_news",
-    "table_name_cn": "文稿库",
-    "dml":{
-            "insert":True,
-            "delete":True,
-            "update":True,
-            "query":True
-    },
-   "primary_key": "id",
-   "sort":" order by id desc ",
-    "structure": [
-                     { "column":"id", "type":"int","column_cn":"ID" , "show": True ,"search":True },
-                     { "column":"event_id", "type":"int","column_cn":"event_id" , "show": True ,"search":True,"insert":True },
-                     { "column":"post_date", "type":"date","column_cn":"日期","show": True,"insert":True },
-                     { "column":"source", "type":"date","column_cn":"数据源","show": True ,"search":True,"insert":True },
-                     { "column":"title", "size":80,"type":"varchar","column_cn":"标题","show": True ,"search":True,"insert":True},                      
-                     { "column":"content", "type":"textarea","rows":"20", "cols":"120", "column_cn":"内容","show": False , "html":True,"insert":True}
-                ]
- }, 
-{
-    "table_name": "t_yhk_xuexirili",
-    "table_name_cn": "学习日历",
-    "dml":{
-            "insert":True,
-            "delete":True,
-            "update":True,
-            "query":True
-    },
-   "primary_key": "id",
-   "sort":" order by id desc ",
-    "structure": [
-                     { "column":"id", "type":"int","column_cn":"ID" , "show": True },
-                     { "column":"first_happen_date", "type":"date","column_cn":"日期","show": True,"search":True ,"insert":True}, 
-                     { "column":"title", "size":80,"type":"varchar","column_cn":"标题","show": True ,"search":True,"insert":True},                      
-                     { "column":"content", "type":"textarea","rows":"20", "cols":"120", "column_cn":"内容","show": False,"insert":True , "html":True }
-                ]
- }     ,
-              {
-    "table_name": "t_yhk_foot_detail",
-    "table_name_cn": "学习汇聚",
-    "dml":{
-            "insert":False,
-            "delete":False,
-            "update":True,
-            "query":True
-    },
-   "primary_key": "id",
-   "sort":" order by id desc ",
-    "structure": [
-                     { "column":"id", "type":"int","column_cn":"ID" , "show": True ,"search":True }, 
-                     { "column":"visit_date", "type":"date","column_cn":"日期","show": True,"insert":True }, 
-                     { "column":"title", "size":80,"type":"varchar","column_cn":"标题","show": True ,"search":True,"insert":True},                      
-                     { "column":"arrive_nation_cn", "size":80,"type":"varchar","column_cn":"访问国家","show": True ,"search":True,"insert":True},   
-                     
+                     { "column":"fly_from", "type":"varchar","column_cn":"出发地","show": True,"insert":True },
+                     { "column":"fly_to", "type":"varchar", "column_cn":"目的地","show": True ,"search":True,"insert":True},                      
+                     { "column":"price", "type":"int","column_cn":"价格","show": True ,"insert":True, },
+                     { "column":"flight_no", "type":"varchar","rows":"20", "cols":"120","show": True , "column_cn":"航班号","show": True ,"insert":True, },
+                     { "column":"time", "type":"varchar", "column_cn":"离港时间","show": True ,"insert":True, },
                 ]
  },         
 ]
@@ -99,12 +48,7 @@ urls = (
 
 class DBPool(object):   
     #连接池对象  
-    __pool = None  
-#     def __init__(self):
-#         #数据库构造函数，从连接池中取出连接，并生成操作游标  
-#         self._conn = DBPool.getConn() 
-#         self._cursor = self._conn.cursor()
-        
+    __pool = None   
     @staticmethod  
     def getConn():  
         """ 
@@ -114,11 +58,11 @@ class DBPool(object):
         
         if DBPool.__pool is None:  
             DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 ,  
-                              host="192.168.4.202" , port=3306, user="no1" , passwd="password",  
-                              db="no1",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1'])  
+                              host="192.168.4.202" , port=3306, user="fly" , passwd="fly",  
+                              db="fly",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1'])  
         connect = DBPool.__pool.connection()
         connect.autocommit = 1
-        print connect
+        print connect   
         return connect
      
     @staticmethod  

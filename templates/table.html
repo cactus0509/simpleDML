@@ -7,7 +7,12 @@ $def with (th_data,search_column)
         <title>
         $if search_column:
         	$search_column["table_name_cn"]
-        </title>     
+        </title>   
+        <script type="text/javascript" src="/static/js/jquery-1.8.0.min.js">
+        	jQuery.noConflict(); 
+        </script> 
+        <link rel="stylesheet" type="text/css" href="/static/css/default.css">
+          
     </head>
     <body>
  
@@ -24,9 +29,15 @@ $if search_column:
 						    <li>
 						        $line["column_cn"] :  
 						        	$if line["type"] in ["varchar","int","date"]:
-						        		<input  type="$line["type"]"  name='$line["column"]'  value='$line["value"]'  size='$line["size"]'  />
-						            $if line["type"]=="textarea": 
-								        <textarea rows='$line["rows"]' cols='$line["cols"]' name='$line["column"]' >$line["value"]</textarea> 
+						        		<input  type="input"  name='$line["column"]'  value='$line["value"]'  size='$line["size"]'  />
+						            $if line["type"]=="textarea":  
+								        <script type="text/javascript" src="/static/js/nicEdit-latest.js"></script> <script type="text/javascript">
+									    //<![CDATA[
+									            bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+									      //]]>
+									    </script> 
+										<textarea name="$line["column"]" style="width:60%; margin:25px;height:300px;">$line["value"]</textarea> 
+										     
 						    </li> 
 						    
 				     <li>

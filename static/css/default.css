@@ -1,0 +1,17 @@
+#tags_span span {
+	margin:5px 10px 5px 0;
+	display:inline-block;
+	background-color:#c7cbd6;
+	border-color:#c7cbd6;
+	cursor:pointer;
+}
+#tags_span span:hover {
+	background-color:#b0b5b9;
+	border-color:#b0b5b9;
+	
+}
+
+#tags_span span.selected {
+	color:#d54121;
+	background:url(/static/images/completed.png) no-repeat right bottom
+}
