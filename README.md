@@ -10,12 +10,20 @@
     >  # pip2.7 install MySQL-python <br>
 
 3. 修改数据库连接池，要维护的表。
+   3.1 准备数据。
+```
+MySQL [demo]> create database fly;
 
-   # vi admin.py
+MySQL [demo]> create table fly ( id int not null primary key AUTO_INCREMENT, fly_from varchar(32),fly_to varchar(32),price int, flight_no varchar(32) , time varchar(32) ); 
+
+insert into fly (fly_from,fly_to，flight_no,price,time ) values ('金昌','北京','KN5656',1338,'2017-02-14');
+insert into fly (fly_from,fly_to,flight_no,price,time ) values ('呼和浩特','北京','KN2262',1198,'2017-02-14');
+insert into fly (fly_from,fly_to,flight_no,price,time ) values ('长治','北京','KN2928',1658,'2017-02-14');
+insert into fly (fly_from,fly_to,flight_no,price,time ) values ('安顺','北京','KN5226',1388,'2017-02-14');
+insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京','KN5812',898,'2017-02-14');
+```
    
-    
-   
-   3.1 数据库连接池部分 
+   3.2 编辑 admin.py ， 数据库连接池部分 
    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
      ```
      if DBPool.__pool is None:  
@@ -30,11 +38,11 @@
      ```
    
    
-   3.2  表维护部分：
+   3.3 编辑 admin.py ， 表维护部分：
  ```
 init_tables=[
  {
-    "table_name": "t_yhk_words",  #表名
+    "table_name": "fly",  #表名
     "table_name_cn": "每日习语",  #表的中文名称
     "dml":{
             "insert":True,   #是否启用增加表数据功能。
@@ -46,9 +54,11 @@ init_tables=[
     "sort":" order by id desc ",  # 查询列表的排序规则。 使用标准SQL语法
     "structure": [   #表结构描述， 只需要列出必要的insert,update用到的字段。
                      { "column":"id", "type":"int","column_cn":"ID" , "size":10, "show": True ,"search":True  },   # show 表示数据在table显示时，是否显示该列。比如content字段太长，没有必要显示，就可以设置为show:False,
-                     { "column":"post_date", "type":"date","size":20, "column_cn":"日期","show": True,"insert":True },    # insert, 表示在插入数据功能页上该字段是否出现在form表单里。
-                     { "column":"title", "type":"varchar","size":80, "column_cn":"标题","show": True ,"search":True,"insert":True},                      
-                     { "column":"content", "type":"textarea","rows":"20", "cols":"120", "column_cn":"内容","show": False ,"insert":True}
+                     { "column":"fly_from", "type":"varchar","column_cn":"出发地","show": True,"insert":True },    # insert, 表示在插入数据功能页上该字段是否出现在form表单里。
+                     { "column":"fly_to", "type":"varchar", "column_cn":"目的地","show": True ,"search":True,"insert":True},                      
+                     { "column":"price", "type":"int","column_cn":"价格","show": True ,"insert":True, },
+                     { "column":"flight_no", "type":"varchar","rows":"20", "cols":"120","show": True , "column_cn":"航班号","show": True ,"insert":True, },
+                     { "column":"time", "type":"varchar", "column_cn":"离港时间","show": True ,"insert":True, }
                 ]
  }, 
  {}, --- 其他表
@@ -62,6 +72,7 @@ init_tables=[
    http://localhost:8080
    
    <img src="http://myblog.mysqloracle.com/index.png">
+   <img src="http://myblog.mysqloracle.com/update.png">
    
     
  
