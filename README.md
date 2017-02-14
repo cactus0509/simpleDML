@@ -28,7 +28,7 @@ insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京'
    
    3.2 编辑 admin.py ， 数据库连接池部分 
    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-     ```
+   ```
      if DBPool.__pool is None:  
          DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 , 
                            host="192.168.4.202" , port=3306, user="no1" , passwd="password", 
@@ -38,8 +38,7 @@ insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京'
          print connect
          return connect 
 
-     ```
-   
+  ```
    
    3.3 编辑 admin.py ， 表维护部分：
  ```
