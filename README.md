@@ -6,14 +6,14 @@
 
 使用方法：
 
-1. 安装 web.py 
+## 1. 安装 web.py 
     >  # pip install web.py
-2. 安装python模块 ：  MySQLdb  DBUtils
+## 2. 安装python模块 ：  MySQLdb  DBUtils
     >  # pip2.7 install DBUtils  <br>
     >  # pip2.7 install MySQL-python <br>
 
-3. 修改数据库连接池，要维护的表。
-   3.1 准备数据。
+##  3. 修改数据库连接池，要维护的表。
+### 3.1 准备数据。
 ```
 MySQL [demo]> create database fly;
 
@@ -26,8 +26,7 @@ insert into fly (fly_from,fly_to,flight_no,price,time ) values ('安顺','北京
 insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京','KN5812',898,'2017-02-14');
 ```
    
-   3.2 编辑 admin.py ， 数据库连接池部分 
-   +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+### 3.2 编辑 admin.py ， 数据库连接池部分 
    ```
      if DBPool.__pool is None:  
          DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 , 
@@ -40,7 +39,7 @@ insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京'
 
   ```
    
-   3.3 编辑 admin.py ， 表维护部分：
+### 3.3 编辑 admin.py ， 表维护部分：
  ```
 init_tables=[
  {
@@ -67,10 +66,12 @@ init_tables=[
  ]
  ```
  
-4. 启动 功能页面
+ 
+ 
+## 4. 启动 功能页面
   > python admin.py 
 
-5.打开浏览器访问:
+## 5.打开浏览器访问:
    http://localhost:8080
    
    <img src="http://myblog.mysqloracle.com/index.png">
