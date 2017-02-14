@@ -61,6 +61,8 @@ init_tables=[
 5.打开浏览器访问:
    http://localhost:8080
    
+   <img src="http://myblog.mysqloracle.com/index.png">
+   
     
  
  
