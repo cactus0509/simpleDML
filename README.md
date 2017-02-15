@@ -69,7 +69,7 @@ init_tables=[
  
  
 ## 4. 启动 功能页面
-  > python admin.py 
+  > python demo.py 
 
 ## 5.打开浏览器访问:
    http://localhost:8080
