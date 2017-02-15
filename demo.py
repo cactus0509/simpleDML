@@ -9,32 +9,37 @@ from MySQLdb.cursors import DictCursor
 from DBUtils.PooledDB import PooledDB  
 
 render = web.template.render('templates') 
-"""
-create table fly ( id int not null primary key AUTO_INCREMENT, fly_from varchar(32),fly_to varchar(32),price int, flight_no varchar(32) , time varchar(32) ); 
 
-"""
-init_tables=[
- {
-    "table_name": "fly",
-    "table_name_cn": "航班信息",
-    "dml":{
-            "insert":True,
-            "delete":True,
-            "update":True,
-            "query":True
-    },
-    "primary_key": "id",
-    "sort":" order by id desc ",
-    "structure": [
-                     { "column":"id", "type":"int","column_cn":"ID" , "size":10, "show": True ,"search":True  },
-                     { "column":"fly_from", "type":"varchar","column_cn":"出发地","show": True,"insert":True },
-                     { "column":"fly_to", "type":"varchar", "column_cn":"目的地","show": True ,"search":True,"insert":True},                      
-                     { "column":"price", "type":"int","column_cn":"价格","show": True ,"insert":True, },
-                     { "column":"flight_no", "type":"varchar","rows":"20", "cols":"120","show": True , "column_cn":"航班号","show": True ,"insert":True, },
-                     { "column":"time", "type":"varchar", "column_cn":"离港时间","show": True ,"insert":True, },
-                ]
- },         
-]
+class Config():
+    """
+       每页显示多少行
+    """
+    page_count=30
+    """
+        表配置
+    """
+    init_tables=[
+     {
+        "table_name": "fly",
+        "table_name_cn": "航班信息",
+        "dml":{
+                "insert":True,
+                "delete":True,
+                "update":True,
+                "query":True
+        }, 
+        "primary_key": "id",
+        "sort":" order by id desc ",
+        "structure": [
+                         { "column":"id", "type":"int","column_cn":"ID" , "size":10, "show": True ,"search":True  },
+                         { "column":"fly_from", "type":"varchar","column_cn":"出发地","show": True,"insert":True,"search":True },
+                         { "column":"fly_to", "type":"varchar", "column_cn":"目的地","show": True ,"search":True,"insert":True},                      
+                         { "column":"price", "type":"int","column_cn":"价格","show": True ,"insert":True, },
+                         { "column":"flight_no", "type":"varchar","rows":"20", "cols":"120","show": True , "column_cn":"航班号","show": True ,"insert":True, },
+                         { "column":"time", "type":"varchar", "column_cn":"离港时间","show": True ,"insert":True, },
+                    ]
+     },         
+    ]
  
 urls = (        
   '/', 'index',
@@ -50,19 +55,14 @@ class DBPool(object):
     #连接池对象  
     __pool = None   
     @staticmethod  
-    def getConn():  
-        """ 
-        @summary: 静态方法，从连接池中取出连接 
-        @return MySQLdb.connection 
-        """  
+    def getConn():   
         
         if DBPool.__pool is None:  
             DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 ,  
-                              host="192.168.4.202" , port=3306, user="fly" , passwd="fly",  
+                              host="192.168.0.201" , port=3306, user="fly" , passwd="fly",  
                               db="fly",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1'])  
         connect = DBPool.__pool.connection()
-        connect.autocommit = 1
-        print connect   
+        connect.autocommit = 1 
         return connect
      
     @staticmethod  
@@ -71,18 +71,18 @@ class DBPool(object):
     
     
 class DBMgr():
-    page_count=100
+    
     def getData(self,table_name,columns,page,sort=None,search_column=None):
         try:
             cursor = DBPool.getCursor()
-            sql_columns=""
-            
+            sql_columns="" 
+
             for col in columns:
                 sql_columns = sql_columns + col["column"]  + ","
             sql_columns = sql_columns + "1 "
             
-            limit_from = page * self.page_count
-            limit_to = self.page_count
+            limit_from = page * Config.page_count
+            limit_to = Config.page_count
             where = ""
             orderby=""
             if sort:
@@ -95,8 +95,15 @@ class DBMgr():
                             where = where + " and " + line["column"] + " = " + line["value"]
                         if line["type"] in [ "textarea", "varchar" ]:
                             where = where + " and " + line["column"] + " like '%" + line["value"] + "%'"
-                         
-            
+                
+            count=0
+            sql_count="""
+                select count(1) cnt from {0} where 1=1 {1}
+            """.format( table_name,where  )
+            cursor.execute(sql_count)
+            data= cursor.fetchone()
+            count = data["cnt"]
+            print count 
             sql =   " select " + sql_columns + " from "+ table_name   + " where 1 =1  " + where +  orderby + "  limit " + str(limit_from) + "," + str(limit_to)
             print sql
             cursor.execute(sql)
@@ -108,8 +115,16 @@ class DBMgr():
                 for column in columns:
                     cells[column["column"]] =  line[ column["column"] ]  
                 rows.append(  cells  )  
-             
-            return rows
+            
+            page_split=divmod(count,Config.page_count)
+            if page_split[1] > 0 :
+                total_page = page_split[0] + 1
+            else:
+                total_page = page_split[0] 
+                
+            
+            ret={"rows":rows,"total_page":total_page}
+            return ret
         
         except Exception,e:
             print e
@@ -198,26 +213,46 @@ dbMgr=DBMgr()
 class index:
     def GET(self): 
         data=[]  
-        for table in init_tables:
+        for table in Config.init_tables:
             data.append( table) 
-        return render.main( data,None,None,None)
+        current_page=1
+        total_page=1
+        return render.main( data,None,None,None,total_page,current_page)
 
 class TABLE:
     def GET(self): 
         input=web.input() 
-        table_name_req=input.table_name
+        table_name=input.table_name
         data=[]
         th_data=[] 
-        search_column={ "table_name": table_name_req, "data": [] } 
+        search_column={ "table_name": table_name, "data": [] } 
         sort=None
-        #th
-        for table in init_tables:
-            if not th_data and table["table_name"] == table_name_req:
+        current_page=1
+        forward=1
+        page=0
+        if "current_page" not in dict(input):
+            current_page = 1
+        else:
+            current_page = int(input.current_page)
+          
+        if "forward"  in dict(input):
+            forward = input.forward
+            if forward=="1":
+                current_page = current_page + 1
+                page=current_page
+            elif forward=="0":
+                current_page = current_page - 1
+                page=current_page
+            page = page -1 
+                
+        #th 
+        for table in Config.init_tables:
+            if not th_data and table["table_name"] == table_name:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
                 sort=table["sort"]
-                structure = table["structure"]
+                structure = table["structure"] 
                 for row in structure:
                     if row["show"]:
                         th_data.append( { "column" :   row["column"] , "column_cn" :   row["column_cn"]  }  )
@@ -226,12 +261,14 @@ class TABLE:
                      
             data.append( table )
         
-        #td
-        page=0
+        #td 
         
-        td_data = dbMgr.getData(table_name_req,th_data,page,sort)
-        return render.main( data,th_data,td_data,search_column)
-
+        print page
+        result = dbMgr.getData(table_name,th_data,page,sort)
+        td_data=result["rows"]
+        total_page=result["total_page"]
+        
+        return render.main( data,th_data,td_data,search_column,total_page,current_page)
 
 class DELETE:
     def GET(self): 
@@ -244,7 +281,7 @@ class DELETE:
         delete_key=None
         delete_value=None
         #th
-        for table in init_tables:
+        for table in Config.init_tables:
             if not th_data and table["table_name"] == table_name_req:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
@@ -274,8 +311,8 @@ class DELETE:
 class SEARCH:
     def POST(self): 
         input=dict(web.input())  
-        table_name_req=input["table_name"] 
-        print table_name_req
+        table_name=input["table_name"] 
+        print table_name
         
         data=[]
         th_data=[]
@@ -283,10 +320,10 @@ class SEARCH:
         whereColumn=[]
         sort=None
         
-        search_column={ "table_name": table_name_req, "data": [  ] }
+        search_column={ "table_name": table_name, "data": [  ] }
         #th
-        for table in init_tables:
-            if not th_data and table["table_name"] == table_name_req:
+        for table in Config.init_tables:
+            if not th_data and table["table_name"] == table_name:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
@@ -310,9 +347,15 @@ class SEARCH:
         print whereColumn
         #td
         page=0
+        total_page=1
+        current_page=1
+        result = dbMgr.getData(table_name,th_data,page,sort,whereColumn)
          
-        td_data = dbMgr.getData(table_name_req,th_data,page,sort,whereColumn)
-        return render.main( data,th_data,td_data,search_column)
+        td_data=result["rows"]
+        total_page=result["total_page"]
+        
+        
+        return render.main( data,th_data,td_data,search_column,total_page,current_page)
     
 class INSERT:
     def GET(self): 
@@ -325,7 +368,7 @@ class INSERT:
         search_column={ "table_name": table_name_req, "data": [] } 
         
         #th
-        for table in init_tables:
+        for table in Config.init_tables:
             if not th_data and table["table_name"] == table_name_req:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["dml"] = table["dml"]
@@ -362,7 +405,7 @@ class GETONE:
         th_data=[] 
         search_column={ "table_name": table_name_req, "data": [] }  
         #th
-        for table in init_tables:
+        for table in Config.init_tables:
             if not th_data and table["table_name"] == table_name_req:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["dml"] = table["dml"]
@@ -410,7 +453,7 @@ class EDIT:
         primary_column={}
         
         #th
-        for table in init_tables:
+        for table in Config.init_tables:
             if not th_data and table["table_name"] == table_name_req:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
