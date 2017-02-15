@@ -33,7 +33,7 @@ insert into fly (fly_from,fly_to,flight_no,price,time ) values ('安顺','北京
 insert into fly (fly_from,fly_to,flight_no,price,time) values ('襄阳','北京','KN5812',898,'2017-02-14');
 ```
    
-### 3.2 编辑 admin.py ， 数据库连接池部分 
+### 3.2 编辑 demo.py ， 数据库连接池部分 
    ```
      if DBPool.__pool is None:  
          DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 , 
