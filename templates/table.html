@@ -6,10 +6,10 @@ $def with (th_data,search_column)
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
         <title>
         $if search_column:
-        	$search_column["table_name_cn"]
+                $search_column["table_name_cn"]
         </title>   
         <script type="text/javascript" src="/static/js/jquery-1.8.0.min.js">
-        	jQuery.noConflict(); 
+                jQuery.noConflict(); 
         </script> 
         <link rel="stylesheet" type="text/css" href="/static/css/default.css">
           
@@ -17,35 +17,35 @@ $def with (th_data,search_column)
     <body>
  
 $if search_column:
-	 <div style="margin:25px;">
-	  	   	<h4>$search_column["table_name_cn"]</h4>
-	 </div>
+         <div style="margin:25px;">
+                        <h4>$search_column["table_name_cn"]</h4>
+         </div>
  
-	 <form  name="updateForm" action="/edit" method="POST"> 
-			<div style="border:1px solid #cccccc;width:100%;background:#fff;" > 
-				   <ul  style="margin-top:30px;background:#FCFCFC;border: 1px; list-style:none;">  
-					$if th_data:
-					   $for line in th_data:
-						    <li>
-						        $line["column_cn"] :  
-						        	$if line["type"] in ["varchar","int","date"]:
-						        		<input  type="input"  name='$line["column"]'  value='$line["value"]'  size='$line["size"]'  />
-						            $if line["type"]=="textarea":  
-								        <script type="text/javascript" src="/static/js/nicEdit-latest.js"></script> <script type="text/javascript">
-									    //<![CDATA[
-									            bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
-									      //]]>
-									    </script> 
-										<textarea name="$line["column"]" style="width:60%; margin:25px;height:300px;">$line["value"]</textarea> 
-										     
-						    </li> 
-						    
-				     <li>
-				      	 <input type="hidden" name="action" value="$search_column["action"]" />
-				      	 <input type="hidden" name="table_name" value="$search_column["table_name"]" />
-				         <input type="submit" value="提 交" />
-				     </li>
-				   </ul>
-			</div> 
-		</form>
+         <form  name="updateForm" action="/edit" method="POST"> 
+                        <div style="border:1px solid #cccccc;width:100%;background:#fff;" > 
+                                   <ul  style="margin-top:30px;background:#FCFCFC;border: 1px; list-style:none;">  
+                                        $if th_data:
+                                           $for line in th_data:
+                                                    <li>
+                                                        $line["column_cn"] :  
+                                                                $if line["type"] in ["varchar","int","date"]:
+                                                                        <input  type="input"  name='$line["column"]'  value='$line["value"]'  size='$line["size"]'  />
+                                                            $if line["type"]=="textarea":  
+                                                                        <script type="text/javascript" src="/static/js/nicEdit-latest.js"></script> <script type="text/javascript">
+                                                                            //<![CDATA[
+                                                                                    bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+                                                                              //]]>
+                                                                            </script> 
+                                                                                <textarea name="$line["column"]" style="width:60%; margin:25px;height:300px;">$line["value"]</textarea> 
+                                                                                     
+                                                    </li> 
+                                                    
+                                     <li>
+                                         <input type="hidden" name="action" value="$search_column["action"]" />
+                                         <input type="hidden" name="table_name" value="$search_column["table_name"]" />
+                                         <input type="submit" value="提 交" />
+                                     </li>
+                                   </ul>
+                        </div> 
+                </form>
 </html>
