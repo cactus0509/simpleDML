@@ -39,8 +39,7 @@ class Config():
                          { "column":"time", "type":"varchar", "column_cn":"离港时间","show": True ,"insert":True, },
                     ]
      },         
-    ]
- 
+]
 urls = (        
   '/', 'index',
   '/table','TABLE',
@@ -59,8 +58,8 @@ class DBPool(object):
         
         if DBPool.__pool is None:  
             DBPool.__pool = PooledDB(creator=MySQLdb, mincached=1 , maxcached=20 ,  
-                              host="192.168.0.201" , port=3306, user="fly" , passwd="fly",  
-                              db="fly",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1'])  
+                              host="192.168.4.202" , port=3306, user="fly" , passwd="fly",  
+                              db="fly",use_unicode=False,charset="utf8",cursorclass=DictCursor,setsession=['SET AUTOCOMMIT=1']) 
         connect = DBPool.__pool.connection()
         connect.autocommit = 1 
         return connect
@@ -251,6 +250,7 @@ class TABLE:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
+                search_column["table_name"] = table["table_name"]
                 sort=table["sort"]
                 structure = table["structure"] 
                 for row in structure:
@@ -286,6 +286,7 @@ class DELETE:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
+                search_column["table_name"] = table["table_name"]
                 sort=table["sort"]
                 structure = table["structure"]
                 delete_key=table["primary_key"]
@@ -328,6 +329,7 @@ class SEARCH:
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
                 search_column["primary_key"] = table["primary_key"]
+                search_column["table_name"] = table["table_name"]
                 sort  = table["sort"]
                 structure = table["structure"]
                 for row in structure:
@@ -374,6 +376,7 @@ class INSERT:
                 search_column["dml"] = table["dml"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["action"] = action
+                search_column["table_name"] = table["table_name"]
                 
                 structure = table["structure"]
                 for row in structure: 
@@ -412,7 +415,7 @@ class GETONE:
                 search_column["primary_key"] = table["primary_key"]
                 search_column["action"] = action
                 search_column["primary_key_value"] = dict(input)[  table["primary_key"]   ] 
-                 
+                search_column["table_name"] = table["table_name"]
                 structure = table["structure"]
                 for row in structure: 
                     size=32
@@ -458,6 +461,7 @@ class EDIT:
                 search_column["table_name_cn"] = table["table_name_cn"]
                 search_column["primary_key"] = table["primary_key"]
                 search_column["dml"] = table["dml"]
+                search_column["table_name"] = table["table_name"]
                 structure = table["structure"]
                 primary_key=table["primary_key"]
                 primary_key_value=dict(input)[ primary_key  ] 
